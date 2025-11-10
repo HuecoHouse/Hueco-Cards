@@ -60,5 +60,24 @@
       <footer>Made by <a href="https://huecohouse.com" target="_blank">Hueco House</a></footer>
     </section>
   </main>
+<script>
+window.addEventListener("message", e => {
+  if (e.data.type === "updateCard") {
+    const d = e.data.data;
+    document.documentElement.dataset.theme = d.theme;
+    document.documentElement.style.setProperty("--accent", d.accent);
+    document.querySelector("h1").textContent = d.name;
+    document.querySelector("h2").textContent = d.title;
+    document.querySelector(".company").textContent = d.company;
+    document.querySelector(".location").textContent = d.location;
+    document.querySelector(".avatar img").src = d.photo;
+    document.querySelector("a.phone").href = `tel:${d.phone}`;
+    document.querySelector("a.email").href = `mailto:${d.email}`;
+    document.querySelector("a.website").href = d.website;
+    document.querySelector(".card video source").src = d.video;
+    document.querySelector(".card video").load();
+  }
+});
+</script>
 </body>
 </html>
