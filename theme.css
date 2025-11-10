@@ -1,0 +1,116 @@
+:root {
+  --blur: 15px;
+  --card-width: 420px;
+  --avatar-size: 150px;
+  --font: 'Inter', sans-serif;
+  --transition: all 0.35s ease;
+}
+
+/* --- Base --- */
+body {
+  font-family: var(--font);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  overflow: hidden;
+  margin: 0;
+  background: var(--bg, #111);
+  color: var(--text, #fff);
+}
+
+.card {
+  position: relative;
+  width: var(--card-width);
+  padding: 2.5rem;
+  border-radius: 20px;
+  text-align: center;
+  overflow: hidden;
+  backdrop-filter: blur(var(--blur));
+  border: 1px solid rgba(255,255,255,0.25);
+  box-shadow: 0 0 40px rgba(0,0,0,0.2);
+}
+
+.card video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.4;
+  z-index: 0;
+}
+
+.card > *:not(video) {
+  position: relative;
+  z-index: 1;
+}
+
+.avatar img {
+  width: var(--avatar-size);
+  height: var(--avatar-size);
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.7);
+  object-fit: cover;
+  box-shadow: 0 0 25px rgba(0,0,0,0.3);
+}
+
+h1 { font-weight: 700; font-size: 1.8rem; margin: 0.5rem 0; }
+h2 { font-weight: 500; font-size: 1.1rem; color: var(--accent); margin-bottom: 0.75rem; }
+
+a.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  border-radius: 10px;
+  text-decoration: none;
+  padding: 0.9rem 1.2rem;
+  transition: var(--transition);
+  backdrop-filter: blur(6px);
+  font-weight: 500;
+}
+
+a.button svg {
+  width: 22px; height: 22px; stroke-width: 2; fill: none;
+  stroke: var(--accent);
+}
+
+/* --- Themes --- */
+[data-theme="electric-rose"] {
+  --accent: #ff69b4;
+  --bg: #f8f8fa;
+  --text: #111;
+}
+[data-theme="electric-rose"] .card {
+  background: rgba(255,255,255,0.25);
+  box-shadow: 0 0 40px rgba(255,105,180,0.25);
+}
+[data-theme="electric-rose"] a.button {
+  background: rgba(255,255,255,0.5);
+  border: 1px solid rgba(255,255,255,0.4);
+  color: #111;
+}
+[data-theme="electric-rose"] a.button:hover {
+  background: rgba(255,255,255,0.8);
+  box-shadow: 0 0 15px rgba(255,105,180,0.3);
+}
+
+[data-theme="luxe-noir"] {
+  --accent: #ff8c3c;
+  --bg: #0c0c0c;
+  --text: #fff;
+}
+[data-theme="luxe-noir"] .card {
+  background: rgba(255,255,255,0.1);
+  box-shadow: 0 0 40px rgba(255,140,60,0.15);
+}
+[data-theme="luxe-noir"] a.button {
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,255,255,0.25);
+  color: #fff;
+}
+[data-theme="luxe-noir"] a.button:hover {
+  background: rgba(255,140,60,0.15);
+  box-shadow: 0 0 15px rgba(255,140,60,0.25);
+}

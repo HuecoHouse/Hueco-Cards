@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hueco Card</title>
+  <meta name="description" content="Digital business card powered by Hueco House." />
+  <meta name="theme-color" content="#000" />
+  <link rel="stylesheet" href="theme.css">
+  <link rel="icon" href="favicon.svg">
+  <script>
+    async function loadCard() {
+      const params = new URLSearchParams(window.location.search);
+      const cardName = params.get("card") || "morgan";
+      const response = await fetch(`cards/${cardName}.json`);
+      const data = await response.json();
+      renderCard(data);
+    }
+
+    function renderCard(d) {
+      document.documentElement.style.setProperty("--accent", d.accent);
+      document.documentElement.dataset.theme = d.theme;
+
+      document.querySelector(".avatar img").src = d.photo;
+      document.querySelector("h1").textContent = d.name;
+      document.querySelector("h2").textContent = d.title;
+      document.querySelector("p.company").textContent = `${d.company}`;
+      document.querySelector("p.location").textContent = d.location;
+      document.querySelector("a.phone").href = `tel:${d.phone}`;
+      document.querySelector("a.phone span").textContent = d.phone;
+      document.querySelector("a.email").href = `mailto:${d.email}`;
+      document.querySelector("a.website").href = d.website;
+      document.querySelector(".card video source").src = d.video;
+      document.querySelector(".card video").load();
+    }
+
+    window.addEventListener("DOMContentLoaded", loadCard);
+  </script>
+</head>
+
+<body>
+  <main>
+    <section class="card">
+      <video autoplay muted loop playsinline>
+        <source src="" type="video/mp4">
+      </video>
+
+      <div class="avatar"><img alt="Portrait"></div>
+      <h1></h1>
+      <h2></h2>
+      <p class="company"></p>
+      <p class="location"></p>
+
+      <div class="buttons">
+        <a class="button phone" href="#"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2..."/></svg><span></span></a>
+        <a class="button email" href="#"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><polyline points="3,7 12,13 21,7"/></svg>Email</a>
+        <a class="button website" href="#" target="_blank"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 0 20M12 2a15.3 15.3 0 0 0 0 20"/></svg>Visit Website</a>
+      </div>
+
+      <footer>Made by <a href="https://huecohouse.com" target="_blank">Hueco House</a></footer>
+    </section>
+  </main>
+<script>
+window.addEventListener("message", e => {
+  if (e.data.type === "updateCard") {
+    const d = e.data.data;
+    document.documentElement.dataset.theme = d.theme;
+    document.documentElement.style.setProperty("--accent", d.accent);
+    document.querySelector("h1").textContent = d.name;
+    document.querySelector("h2").textContent = d.title;
+    document.querySelector(".company").textContent = d.company;
+    document.querySelector(".location").textContent = d.location;
+    document.querySelector(".avatar img").src = d.photo;
+    document.querySelector("a.phone").href = `tel:${d.phone}`;
+    document.querySelector("a.email").href = `mailto:${d.email}`;
+    document.querySelector("a.website").href = d.website;
+    document.querySelector(".card video source").src = d.video;
+    document.querySelector(".card video").load();
+  }
+});
+</script>
+</body>
+</html>
