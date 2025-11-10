@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Hueco Card Builder | Hueco House</title>
-  <meta name="description" content="Build and export custom Hueco House digital business cards.">
-  <meta name="theme-color" content="#000">
+  <meta name="description" content="Live builder for Hueco House digital business cards.">
+  <meta name="theme-color" content="#000" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
   <style>
@@ -97,6 +97,11 @@
       overflow: hidden;
       box-shadow: 0 0 30px rgba(0,0,0,0.3);
       background: #000;
+      transition: transform 0.3s ease;
+    }
+
+    iframe:hover {
+      transform: scale(1.02);
     }
 
     footer {
@@ -111,6 +116,7 @@
 <body>
   <aside>
     <h1>Hueco Card Builder</h1>
+
     <label>Client Name</label>
     <input id="name" placeholder="Marlon Alvarez">
 
@@ -148,60 +154,43 @@
     <label>Background Video Filename</label>
     <input id="video" placeholder="gradient-background.mp4">
 
-    <button onclick="generateCard()">Generate & Preview</button>
     <button onclick="downloadPackage()">Download Package (.zip)</button>
 
     <footer>© 2025 Hueco House — Built for Hueco Cards™</footer>
   </aside>
 
   <main>
-    <iframe id="preview" src="index.html?card=morgan"></iframe>
+    <iframe id="preview" src="index.html"></iframe>
   </main>
 
-  <script>
-    async function generateCard() {
-      const card = {
-        name: document.getElementById("name").value,
-        title: document.getElementById("title").value,
-        company: document.getElementById("company").value,
-        location: document.getElementById("location").value,
-        email: document.getElementById("email").value,
-        phone: document.getElementById("phone").value,
-        website: document.getElementById("website").value,
-        accent: document.getElementById("accent").value,
-        theme: document.getElementById("theme").value,
-        photo: document.getElementById("photo").value,
-        video: document.getElementById("video").value
-      };
+  <script type="module">
+    import JSZip from "https://cdn.jsdelivr.net/npm/jszip@3.10.1/+esm";
 
-      const blob = new Blob([JSON.stringify(card, null, 2)], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const iframe = document.getElementById("preview");
-      iframe.src = `index.html?card=${card.name.toLowerCase().replace(/ /g, "")}`;
-      localStorage.setItem("previewData", JSON.stringify(card));
+    const fields = [
+      "name","title","company","location","email","phone","website","accent","theme","photo","video"
+    ];
+
+    const inputs = Object.fromEntries(fields.map(f => [f, document.getElementById(f)]));
+    const iframe = document.getElementById("preview");
+
+    // Live preview updates on input
+    fields.forEach(f => inputs[f].addEventListener("input", updatePreview));
+
+    function updatePreview() {
+      const data = Object.fromEntries(fields.map(f => [f, inputs[f].value]));
+      localStorage.setItem("previewData", JSON.stringify(data));
+      iframe.contentWindow.postMessage({ type: "updateCard", data }, "*");
     }
 
+    // ZIP exporter
     async function downloadPackage() {
-      const JSZip = await import("https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js");
-      const zip = new JSZip.default();
-      const name = document.getElementById("name").value.toLowerCase().replace(/ /g, "");
-      const card = {
-        name: document.getElementById("name").value,
-        title: document.getElementById("title").value,
-        company: document.getElementById("company").value,
-        location: document.getElementById("location").value,
-        email: document.getElementById("email").value,
-        phone: document.getElementById("phone").value,
-        website: document.getElementById("website").value,
-        accent: document.getElementById("accent").value,
-        theme: document.getElementById("theme").value,
-        photo: document.getElementById("photo").value,
-        video: document.getElementById("video").value
-      };
+      const zip = new JSZip();
+      const name = inputs.name.value.toLowerCase().replace(/ /g, "_") || "card";
+      const data = Object.fromEntries(fields.map(f => [f, inputs[f].value]));
 
-      zip.file("card-data.json", JSON.stringify(card, null, 2));
-      zip.file("index.html", `<!-- Replace this with your card template HTML -->`);
-      zip.file("theme.css", `/* Add your theme.css */`);
+      zip.file("card-data.json", JSON.stringify(data, null, 2));
+      zip.file("index.html", "<!-- Insert the Hueco Card index template here -->");
+      zip.file("theme.css", "/* Insert theme.css here */");
 
       const blob = await zip.generateAsync({ type: "blob" });
       const link = document.createElement("a");
